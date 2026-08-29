@@ -1,0 +1,144 @@
+*=====================================*
+15 Reglas en lenguaje natural
+*=====================================*
+
+=====================================
+Tabla de clasificación de variables
+=====================================
+Variable            | Tipo en Java | Ejemplo de valor
+--------------------|--------------|-------------------
+edad                | int          | 20
+activo              | boolean      | true
+saldo               | double       | 150000.0
+autorizado          | boolean      | true
+tieneLicencia       | boolean      | false
+compra              | double       | 120000.0
+clienteFrecuente    | boolean      | true
+tieneInvitacion     | boolean      | false
+esEmpleado          | boolean      | true
+gasolina            | double       | 8.5
+puntos              | int          | 650
+cuentaActiva        | boolean      | true
+velocidad           | double       | 95.5
+velocidadMaxima     | double       | 80.0
+nota                | double       | 3.8
+tieneCupon          | boolean      | true
+precio              | double       | 45000.0
+creditoAprobado     | boolean      | false
+nombre              | String       | "Felipe"
+usuario             | String       | null
+
+
+=====================================
+Reglas con una sola condición
+=====================================
+
+Regla 1 — Mayor de edad - Si la persona tiene 18 años o más, se considera mayor de edad.
+siPues (edad >= 18) {
+    hablame("Ya es mayor de edad, parce")
+}
+
+Regla 2 — Usuario activo
+siPues (activo == deUna) {
+    hablame("El usuario esta activo")
+}
+
+Regla 3 — Hay dinero
+siPues (saldo > 0) {
+    hablame("Todavia hay platica")
+}
+
+
+=====================================
+Reglas con condiciones compuestas usando Y / O
+=====================================
+
+Regla 4 — Puede entrar
+La persona debe ser mayor de edad Y tener autorización.
+siPues (edad >= 18 yTambien autorizado == deUna) {
+    hablame("Siga pues, puede entrar")
+}
+Condición lógica: edad >= 18 AND autorizado == true
+
+Regla 5 — Puede comprar
+Puede comprar si tiene suficiente dinero O tiene crédito aprobado.
+siPues (saldo >= precio oQue creditoAprobado == deUna) {
+    hablame("Hagale pues, puede comprar")
+}
+Condición lógica: saldo >= precio OR creditoAprobado == true
+
+Regla 6 — Puede conducir
+Debe ser mayor de edad Y tener licencia.
+siPues (edad >= 18 yTambien tieneLicencia == deUna) {
+    hablame("Pongase el cinturon y dele pues")
+}
+Condición lógica: edad >= 18 AND tieneLicencia == true
+
+
+=====================================
+Reglas que combinan tipos de datos distintos
+=====================================
+
+Regla 7 — Acceso permitido
+Se combina: edad → numérico, activo → booleano
+siPues (edad >= 18 yTambien activo == deUna) {
+    hablame("Puede ingresar al sistema")
+}
+Tenemos: edad >= 18 → NUMÉRICO, activo == deUna → BOOLEANO
+
+Regla 8 — Puede retirar dinero
+Se combina: saldo → numérico, cuentaActiva → booleano
+siPues (saldo >= 50000 yTambien cuentaActiva == deUna) {
+    hablame("Puede sacar la platica")
+}
+Tenemos: saldo >= 50000 → NUMÉRICO, cuentaActiva == deUna → BOOLEANO
+
+=====================================
+Regla 9 — Descuento para clientes
+Si la compra es superior a cierto valor Y el cliente es frecuente, recibe descuento.
+siPues (compra >= 100000 yTambien clienteFrecuente == deUna) {
+    hablame("Tome su descuentico, parce")
+}
+Tipos: compra → Numérico, clienteFrecuente → Booleano
+
+Regla 10 — Acceso especial
+Una persona puede ingresar si tiene invitación O es empleado.
+siPues (tieneInvitacion == deUna oQue esEmpleado == deUna) {
+    hablame("Siga pues, esta en la lista")
+}
+Tipos: tieneInvitacion → Booleano, esEmpleado → Booleano
+
+Regla 11 — Nivel de gasolina
+Si la gasolina es menor al mínimo permitido, se muestra una advertencia.
+siPues (gasolina < 10) {
+    hablame("Pilas pues, eche gasolina")
+}
+Tipo: gasolina → Numérico
+
+Regla 12 — Promoción especial
+Si el cliente tiene puntos suficientes Y su cuenta está activa, puede acceder a una promoción.
+siPues (puntos >= 500 yTambien cuentaActiva == deUna) {
+    hablame("De una, tiene promocion")
+}
+Tipos: puntos → Numérico, cuentaActiva → Booleano
+
+Regla 13 — Verificación de velocidad
+Si el vehículo supera la velocidad máxima O el conductor no tiene autorización, se genera una advertencia.
+siPues (velocidad > velocidadMaxima oQue autorizado == niRiesgo) {
+    hablame("Ojo pues, algo anda mal")
+}
+Tipos: velocidad → Numérico, velocidadMaxima → Numérico, autorizado → Booleano
+
+Regla 14 — Nivel aprobado
+Si la nota es igual o superior a 3.0, el estudiante aprueba.
+siPues (nota >= 3.0) {
+    hablame("Aprobo, felicidades parce")
+}
+Tipo: nota → Numérico
+
+Regla 15 — Compra con beneficio
+Si el usuario tiene saldo suficiente Y tiene un cupón, puede realizar la compra con beneficio.
+siPues (saldo >= precio yTambien tieneCupon == deUna) {
+    hablame("Hagale pues, compra aprobada con beneficio")
+}
+Tipos: saldo → Numérico, precio → Numérico, tieneCupon → Booleano
