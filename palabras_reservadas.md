@@ -3,46 +3,95 @@
 Sintaxis general de las reglas
 =====================================
 
-<regla>  					::= <estructura_condicional>
+<programa> ::= { <sentencia> }
 
-<estructura_condicional> 			::= "siPues" "(" <condicion> ")" "{" <bloque> "}" [ <bloque_sino> ]
+<sentencia> ::= <estructura_condicional>
+              | <llamada_funcion>
 
-<bloque_sino> 					::= "siNoSiPues" "(" <condicion> ")" "{" <bloque> "}" [ <bloque_sino> ] | "siNoPues" "{" <bloque> "}"
 
-<bloque> 					::= <instruccion> { <instruccion> }
+<estructura_condicional> ::= 
+    "siPues" "(" <expresion_logica> ")" 
+    "{" <bloque> "}" 
+    [ <bloque_sino> ]
 
-<instruccion> 					::= <llamada_funcion> | <asignacion>
 
-<llamada_funcion> 				::= "hablame" "(" <cadena> ")"
+<bloque_sino> ::= 
+    "siNoSiPues" "(" <expresion_logica> ")" 
+    "{" <bloque> "}" 
+    [ <bloque_sino> ]
+    |
+    "siNoPues" "{" <bloque> "}"
 
-<condicion> 					::= <expresion_logica>
 
-<expresion_logica> 				::= <termino_logico> { <operador_logico> <termino_logico> }
+<bloque> ::= { <sentencia> }
 
-<termino_logico> 				::= <negacion> | <comparacion> | "(" <expresion_logica> ")"
 
-<negacion> 					::= "niDeRiesgo" <termino_logico>
+<llamada_funcion> ::= 
+    "hablame" "(" <expresion> ")"
 
-<comparacion> 					::= <operando> <operador_relacional> <operando> | <operando>
 
-<operando> 					::= <variable> | <valor_numerico> | <valor_booleano> | <cadena>
+<expresion> ::= <expresion_logica>
+              | <valor_numerico>
+              | <valor_booleano>
+              | <cadena>
 
-<operador_logico> 				::= "yTambien" | "oQue"
 
-<operador_relacional> 				::= "==" - "laMismaVaina"| "!=" - "nadaQueVer" | ">" - "masChimbaQue"| "<" - "menosChimbaQue"| ">=" | "<="
+<expresion_logica> ::= 
+    <termino_logico> 
+    { <operador_logico> <termino_logico> }
 
-<valor_booleano> 				::= "deUna" | "niRiesgo"
 
-<valor_numerico>	 			::= <digito> { <digito> } [ "." <digito> { <digito> } ]
+<termino_logico> ::= 
+    <comparacion>
+    | <valor_booleano>
+    | "(" <expresion_logica> ")"
 
-<variable> 					::= <letra> { <letra> | <digito> }
 
-<cadena> 					::= '"' { <caracter> } '"'
+<comparacion> ::= 
+    <valor> <operador_relacional> <valor>
 
-<digito> 					::= "0" | "1" | "2" | "3" | "4" | "5" | "6" | "7" | "8" | "9"
 
-<letra> 					::= "a" | ... | "z" | "A" | ... | "Z" 
+<valor> ::= 
+    <valor_numerico>
+    | <valor_booleano>
 
+
+<operador_logico> ::= 
+    "yTambien"
+    | "oQue"
+
+
+<operador_relacional> ::= 
+    "==" 
+    | "!=" 
+    | ">"
+    | "<"
+    | ">="
+    | "<="
+
+
+<valor_booleano> ::= 
+    "deUna"
+    | "niRiesgo"
+
+
+<valor_numerico> ::= 
+    <digito> { <digito> } 
+    [ "." <digito> { <digito> } ]
+
+
+<cadena> ::= 
+    '"' { <caracter> } '"'
+
+
+<digito> ::= 
+    "0" | "1" | "2" | "3" | "4" 
+    | "5" | "6" | "7" | "8" | "9"
+
+
+<letra> ::= 
+    "a" | ... | "z"
+    | "A" | ... | "Z"
 =====================================
 Tablas de palabras reservadas
 =====================================
