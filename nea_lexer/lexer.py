@@ -1,3 +1,4 @@
+
 PALABRAS_RESERVADAS = {
     "aVerQuePasa",
     "armeUno",
@@ -37,42 +38,25 @@ PALABRAS_RESERVADAS = {
     "yaEsta",
 }
 
+# Tipos de datos propuestos para .nea
+TIPOS = {
+    "numero",
+    "decimal",
+    "texto",
+    "booleano",
+}
 
 SIMBOLOS_DOBLES = {"==", "!=", ">=", "<="}
 
-
 SIMBOLOS = {
-    ";",
-    "(",
-    ")",
-    "{",
-    "}",
-    "[",
-    "]",
-    ",",
-    ".",
-    ":",
-    "+",
-    "-",
-    "*",
-    "/",
-    "=",
-    "<",
-    ">",
-    "!",
+    ";", "(", ")", "{", "}", "[", "]",
+    ",", ".", ":", "+", "-", "*", "/",
+    "=", "<", ">", "!",
 }
 
 
 def tokenizar(texto):
-    """Convierte un texto fuente en una lista de tokens.
-
-    El lexer recorre el texto de izquierda a derecha usando `posicion`.
-    Al mismo tiempo lleva `linea` y `columna` para guardar el lugar exacto
-    donde empieza cada token.
-
-    Cada token se devuelve como una tupla:
-        (tipo, texto_del_token, linea, columna)
-    """
+    """Devuelve tuplas (tipo, lexema, linea, columna)."""
     tokens = []
     posicion = 0
     linea = 1
@@ -81,20 +65,28 @@ def tokenizar(texto):
     while posicion < len(texto):
         caracter = texto[posicion]
 
-        # El salto de linea cambia de renglon y reinicia la columna.
+        # Saltos de línea
         if caracter == "\n":
             posicion += 1
             linea += 1
             columna = 1
             continue
 
-        # Los espacios y tabulaciones separan tokens, pero no se guardan.
+        # Espacios y tabulaciones
         if caracter.isspace():
             posicion += 1
             columna += 1
             continue
 
-        # Un numero empieza con un digito y puede tener parte decimal.
+        # Tarea 6: comentarios // hasta el final de la línea
+        if texto.startswith("//", posicion):
+            while posicion < len(texto) and texto[posicion] != "\n":
+                posicion += 1
+                columna += 1
+            # No consumimos el salto de línea: lo procesa el siguiente ciclo.
+            continue
+
+        # Números enteros y decimales
         if caracter.isdigit():
             inicio = posicion
             columna_inicio = columna
@@ -115,44 +107,85 @@ def tokenizar(texto):
                     posicion += 1
                     columna += 1
 
-            numero = texto[inicio:posicion]
-            tokens.append(("NUMERO", numero, linea, columna_inicio))
+            tokens.append((
+                "NUMERO",
+                texto[inicio:posicion],
+                linea,
+                columna_inicio,
+            ))
             continue
 
-        # Una palabra empieza con letra y luego acepta letras, digitos o "_".
-        # Si coincide con la tabla del lenguaje, es palabra reservada.
-        if caracter.isalpha():
+        # Cadenas entre comillas dobles
+        if caracter == '"':
+            columna_inicio = columna
+            posicion += 1
+            columna += 1
+            inicio = posicion
+
+            while posicion < len(texto) and texto[posicion] not in {'"', "\n"}:
+                posicion += 1
+                columna += 1
+
+            if posicion >= len(texto) or texto[posicion] != '"':
+                raise ValueError(
+                    f"Cadena sin cerrar en linea {linea}, "
+                    f"columna {columna_inicio}"
+                )
+
+            cadena = texto[inicio:posicion]
+            tokens.append(("CADENA", cadena, linea, columna_inicio))
+
+            posicion += 1
+            columna += 1
+            continue
+
+        # Identificadores, tipos y palabras reservadas
+        if caracter.isalpha() or caracter == "_":
             inicio = posicion
             columna_inicio = columna
 
             while (
                 posicion < len(texto)
-                and (texto[posicion].isalpha() or texto[posicion].isdigit() or texto[posicion] == "_")
+                and (
+                    texto[posicion].isalnum()
+                    or texto[posicion] == "_"
+                )
             ):
                 posicion += 1
                 columna += 1
 
             palabra = texto[inicio:posicion]
-            tipo = "PALABRA_RESERVADA" if palabra in PALABRAS_RESERVADAS else "IDENTIFICADOR"
+
+            if palabra in TIPOS:
+                tipo = "TIPO"
+            elif palabra in PALABRAS_RESERVADAS:
+                tipo = "PALABRA_RESERVADA"
+            else:
+                tipo = "IDENTIFICADOR"
+
             tokens.append((tipo, palabra, linea, columna_inicio))
             continue
 
-        # Los operadores como >= o == deben revisarse antes que > o =.
-        posible_simbolo_doble = texto[posicion:posicion + 2]
-        if posible_simbolo_doble in SIMBOLOS_DOBLES:
-            tokens.append(("SIMBOLO", posible_simbolo_doble, linea, columna))
+        # Tarea 5: revisar primero símbolos de dos caracteres
+        posible_simbolo = texto[posicion:posicion + 2]
+
+        if posible_simbolo in SIMBOLOS_DOBLES:
+            tokens.append(("SIMBOLO", posible_simbolo, linea, columna))
             posicion += 2
             columna += 2
             continue
 
-        # Simbolos de un solo caracter: ;, (, ), +, -, etc.
+        # Símbolos de un carácter: incluye = y ;
         if caracter in SIMBOLOS:
             tokens.append(("SIMBOLO", caracter, linea, columna))
             posicion += 1
             columna += 1
             continue
 
-        # Si no pertenece a ninguna regla, el lexer no sabe clasificarlo.
-        raise ValueError(f"Caracter no reconocido {caracter!r} en linea {linea}, columna {columna}")
+        # Tarea 6.1: error léxico con posición exacta
+        raise ValueError(
+            f"Caracter no reconocido {caracter!r} "
+            f"en linea {linea}, columna {columna}"
+        )
 
     return tokens
