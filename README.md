@@ -1,94 +1,64 @@
 # Lenguaje .nea
 
-Proyecto del Grupo 11 para definir un lenguaje de programacion con sintaxis
-inspirada en expresiones colombianas.
+Proyecto del Grupo 11 para la materia Lenguajes Formales. `.nea` es un
+lenguaje de programacion con palabras inspiradas en expresiones colombianas.
 
 Integrantes:
 
 - Esteban Pineda Ardila
 - Cristian Felipe Lopez
+- Steven Cardona
 
-## Reglas en lenguaje natural
-
-1. Si la persona tiene 18 anos o mas, se considera mayor de edad.
-2. Saber si un usuario esta activo.
-3. Saber si hay dinero.
-4. La persona debe ser mayor de edad y tener autorizacion.
-5. Puede comprar si tiene suficiente dinero o tiene credito aprobado.
-6. Debe ser mayor de edad y tener licencia.
-7. Saber si alguien tiene el acceso permitido.
-8. Es posible retirar dinero.
-9. Si la compra es superior a cierto valor y el cliente es frecuente, recibe descuento.
-10. Una persona puede ingresar si tiene invitacion o es empleado.
-11. Si la gasolina es menor al minimo permitido, se muestra una advertencia.
-12. Si el cliente tiene puntos suficientes y su cuenta esta activa, puede acceder a una promocion.
-13. Si el vehiculo supera la velocidad maxima o el conductor no tiene autorizacion, se genera una advertencia.
-14. Si la nota es igual o superior a 3.0, el estudiante aprueba.
-15. Si el usuario tiene saldo suficiente y tiene un cupon, puede realizar la compra con beneficio.
-
-## Variables del sistema
-
-| Variable | Tipo en Java | Ejemplo de valor |
-| --- | --- | --- |
-| edad | int | 20 |
-| activo | boolean | true |
-| saldo | double | 150000.0 |
-| autorizado | boolean | true |
-| tieneLicencia | boolean | false |
-| compra | double | 120000.0 |
-| clienteFrecuente | boolean | true |
-| tieneInvitacion | boolean | false |
-| esEmpleado | boolean | true |
-| gasolina | double | 8.5 |
-| puntos | int | 650 |
-| cuentaActiva | boolean | true |
-| velocidad | double | 95.5 |
-| velocidadMaxima | double | 80.0 |
-| nota | double | 3.8 |
-| tieneCupon | boolean | true |
-| precio | double | 45000.0 |
-| creditoAprobado | boolean | false |
-| nombre | String | "Felipe" |
-| usuario | String | null |
+Las palabras reservadas y algunos ejemplos del lenguaje estan en
+`lenguaje-colombiano.txt` y `palabras_reservadas.md`.
 
 ## Lexer
 
-El proyecto incluye un lexer inicial para `.nea`. El lexer recibe texto fuente
-y lo convierte en una lista de tokens con su tipo, contenido, linea y columna.
-
-Cada token tiene la forma:
+El lexer recibe codigo fuente y lo separa en tokens. Cada token guarda cuatro
+datos:
 
 ```python
 (tipo, texto, linea, columna)
 ```
 
-Ejemplo:
+Por ejemplo:
 
 ```python
 from nea_lexer import tokenizar
 
-print(tokenizar("5;\n12;"))
+print(tokenizar("numero edad = 20;"))
 ```
 
-Salida esperada:
+produce:
 
 ```python
 [
-    ("NUMERO", "5", 1, 1),
-    ("SIMBOLO", ";", 1, 2),
-    ("NUMERO", "12", 2, 1),
-    ("SIMBOLO", ";", 2, 3),
+    ("TIPO", "numero", 1, 1),
+    ("IDENTIFICADOR", "edad", 1, 8),
+    ("SIMBOLO", "=", 1, 13),
+    ("NUMERO", "20", 1, 15),
+    ("SIMBOLO", ";", 1, 17),
 ]
 ```
 
-Tipos de token usados actualmente:
+El segundo dato de cada tupla es el lexema: el texto exacto que se encontro en
+el codigo. En el ejemplo anterior, `edad` y `20` son lexemas.
 
-- `NUMERO`: numeros enteros o decimales, como `20` o `3.0`.
-- `IDENTIFICADOR`: nombres de variables, como `edad`, `nota` o `nota_final2`.
-- `PALABRA_RESERVADA`: palabras propias del lenguaje, como `siPues`.
-- `SIMBOLO`: simbolos y operadores, como `;`, `(`, `)`, `>=` o `==`.
+### Tipos de token
 
-## Estructura del proyecto
+| Tipo | Ejemplos |
+| --- | --- |
+| `TIPO` | `numero`, `decimal`, `texto`, `booleano` |
+| `IDENTIFICADOR` | `edad`, `total`, `nota_final2` |
+| `PALABRA_RESERVADA` | `siPues`, `mientrasTinto`, `hablame` |
+| `NUMERO` | `20`, `3.14` |
+| `CADENA` | `"hola"` |
+| `OPERADOR` | `+`, `-`, `*` |
+| `SIMBOLO` | `=`, `;`, `>=`, `==` |
+
+Los comentarios comienzan con `//` y se ignoran hasta el final de la linea.
+
+## Estructura
 
 ```text
 nea_lexer/
@@ -98,168 +68,154 @@ nea_lexer/
 tests/
     __init__.py
     test_lexer.py
+lenguaje-colombiano.txt
+palabras_reservadas.md
+reglas.txt
 README.md
 ```
 
-## Requisitos
+La implementacion esta en `nea_lexer/lexer.py`. Todas las pruebas estan juntas
+en `tests/test_lexer.py`.
 
-- Python 3.12 o superior.
-- Una terminal: PowerShell, CMD, Terminal de macOS o una terminal de Linux.
+## Preparar el entorno
 
-Para verificar que Python esta instalado:
+Se necesita Python 3. Se puede comprobar la version instalada con:
 
 ```bash
 python --version
 ```
 
-Ejemplo de salida:
-
-```text
-Python 3.12.10
-```
-
-## Preparar el proyecto
-
-Entra a la carpeta donde este este proyecto:
-
-```bash
-cd ruta/del/proyecto/lenguaje.nea
-```
-
-Crea el entorno virtual:
+Desde la carpeta del proyecto, crea el entorno virtual:
 
 ```bash
 python -m venv .venv
 ```
 
-Activa el entorno virtual segun tu sistema operativo.
+Activalo con el comando correspondiente a tu terminal.
 
-En Windows PowerShell:
+Windows PowerShell:
 
 ```powershell
 .\.venv\Scripts\Activate.ps1
 ```
 
-En Windows CMD:
+Windows CMD:
 
 ```cmd
 .venv\Scripts\activate.bat
 ```
 
-En macOS o Linux:
+Linux o macOS:
 
 ```bash
 source .venv/bin/activate
 ```
 
-Cuando el entorno este activo, la terminal debe mostrar `(.venv)` al inicio.
+Cuando este activo aparecera `(.venv)` al comienzo de la terminal.
+
+Si PowerShell no permite ejecutar `Activate.ps1`, se puede habilitar solo para
+la terminal actual:
+
+```powershell
+Set-ExecutionPolicy -Scope Process Bypass
+.\.venv\Scripts\Activate.ps1
+```
+
+Tambien es posible usar el entorno sin activarlo:
+
+```powershell
+.\.venv\Scripts\python.exe -m unittest discover -v
+```
 
 ## Ejecutar el lexer
 
-Para ejecutar los ejemplos incluidos en el paquete:
+El paquete incluye unos ejemplos cortos:
 
 ```bash
 python -m nea_lexer
 ```
 
+Para probar otra entrada desde Python:
+
+```python
+from nea_lexer import tokenizar
+
+codigo = 'texto nombre = "Ana";'
+print(tokenizar(codigo))
+```
+
 ## Ejecutar las pruebas
 
-Con el entorno virtual activo, ejecuta:
+Para ejecutar todas las pruebas:
 
 ```bash
 python -m unittest discover -v
 ```
 
-Este comando significa:
+Para ejecutar unicamente los seis casos de entrega:
 
-- `python -m unittest`: ejecuta el modulo de pruebas incluido en Python.
-- `discover`: busca automaticamente archivos de prueba dentro del proyecto.
-- `-v`: muestra informacion detallada de cada prueba.
+```bash
+python -m unittest tests.test_lexer.CasosEvaluacionLexer -v
+```
 
-Cada prueba imprime:
+Esos seis casos muestran en la terminal:
 
-- `Entrada`: texto que se le pasa a `tokenizar`.
-- `Esperado`: lista de tokens que deberia producir.
-- `Obtenido`: lista de tokens producida realmente por el lexer.
+- la entrada;
+- la salida calculada a mano;
+- la salida real del lexer;
+- una marca que indica si ambas coinciden.
 
-Si todo esta bien, debe terminar con:
+Hay tres casos validos: una declaracion sencilla, una expresion sin espacios y
+dos lineas con comentario. Los tres casos invalidos comprueban un caracter
+desconocido, un decimal mal formado y una cadena sin cerrar en la segunda
+linea.
+
+Al final debe aparecer algo parecido a:
 
 ```text
+Ran 25 tests
+
 OK
 ```
 
-Tambien puedes ejecutar el archivo de pruebas directamente:
+## Como funciona
 
-```bash
-python -m unittest tests.test_lexer -v
-```
+`tokenizar` recorre el texto de izquierda a derecha. `posicion` indica que
+caracter se esta leyendo, mientras que `linea` y `columna` guardan su ubicacion.
 
-## Como funciona el algoritmo
+El orden de las comprobaciones importa:
 
-El lexer lee el texto caracter por caracter, de izquierda a derecha.
-Mientras avanza guarda tres datos importantes:
+1. Los saltos de linea actualizan la linea y reinician la columna.
+2. Los espacios y comentarios se consumen sin generar tokens.
+3. Los numeros y las cadenas se leen completos.
+4. Las palabras se leen completas antes de clasificarlas como tipo, reservada
+   o identificador. Por eso `integer` no se divide en `int` y `eger`.
+5. Los simbolos de dos caracteres se revisan antes que los de uno.
+6. Si ninguna regla reconoce el caracter actual, se lanza un error con su linea
+   y columna.
 
-- `posicion`: indice actual dentro del texto.
-- `linea`: numero de linea actual, empezando en 1.
-- `columna`: columna actual, empezando en 1.
+Una palabra debe comenzar con una letra. Despues puede contener letras,
+digitos o `_`, como en `nota_final2`.
 
-Cuando encuentra un salto de linea (`\n`), aumenta `linea` y reinicia
-`columna` a 1.
+## Ejemplo para seguir a mano
 
-Cuando encuentra un numero, sigue leyendo mientras aparezcan mas digitos.
-Tambien acepta decimales como `3.0`.
-
-Cuando encuentra una letra, sigue leyendo mientras aparezcan letras, digitos
-o `_`. Luego revisa si esa palabra esta en la tabla de palabras reservadas.
-Si esta, genera `PALABRA_RESERVADA`; si no, genera `IDENTIFICADOR`.
-
-Los operadores de dos caracteres, como `>=`, `<=`, `==` y `!=`, se revisan
-antes que los simbolos de un solo caracter para no separarlos por error.
-
-## Errores comunes
-
-### PowerShell no deja activar el entorno
-
-Si aparece un error como:
+Entrada:
 
 ```text
-la ejecucion de scripts esta deshabilitada en este sistema
+int total=a+5*2;
 ```
 
-Ejecuta una sola vez:
+| Texto | Clasificacion | Linea | Columna |
+| --- | --- | ---: | ---: |
+| `int` | `TIPO` | 1 | 1 |
+| `total` | `IDENTIFICADOR` | 1 | 5 |
+| `=` | `SIMBOLO` | 1 | 10 |
+| `a` | `IDENTIFICADOR` | 1 | 11 |
+| `+` | `OPERADOR` | 1 | 12 |
+| `5` | `NUMERO` | 1 | 13 |
+| `*` | `OPERADOR` | 1 | 14 |
+| `2` | `NUMERO` | 1 | 15 |
+| `;` | `SIMBOLO` | 1 | 16 |
 
-```powershell
-Set-ExecutionPolicy -Scope CurrentUser RemoteSigned
-```
-
-Luego intenta activar de nuevo:
-
-```powershell
-.\.venv\Scripts\Activate.ps1
-```
-
-### Python no aparece
-
-Si `python --version` dice que Python no existe, instala Python y vuelve a
-abrir la terminal.
-
-### El entorno virtual quedo mal creado
-
-Si `.venv` apunta a una ruta vieja de Python, borra la carpeta `.venv` y
-creala otra vez.
-
-En Windows PowerShell:
-
-```powershell
-Remove-Item -Recurse -Force .venv
-python -m venv .venv
-.\.venv\Scripts\Activate.ps1
-```
-
-En macOS o Linux:
-
-```bash
-rm -rf .venv
-python -m venv .venv
-source .venv/bin/activate
-```
+Este recorrido permite explicar de donde sale cada token y por que tiene esa
+linea y columna.
